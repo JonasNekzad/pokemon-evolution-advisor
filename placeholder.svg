@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Pokemon artwork unavailable</title>
+  <desc id="desc">A neutral placeholder shaped like a Poke Ball</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c2942"/>
+      <stop offset="1" stop-color="#101728"/>
+    </linearGradient>
+  </defs>
+  <circle cx="160" cy="160" r="118" fill="url(#bg)" stroke="#536078" stroke-width="5"/>
+  <path d="M42 160h236" stroke="#536078" stroke-width="12"/>
+  <circle cx="160" cy="160" r="36" fill="#111827" stroke="#536078" stroke-width="9"/>
+  <circle cx="160" cy="160" r="15" fill="#9aa7be"/>
+  <path d="M160 78v33M160 209v33M78 160h33M209 160h33" stroke="#718096" stroke-linecap="round" stroke-width="7"/>
+</svg>

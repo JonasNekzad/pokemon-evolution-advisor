@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A data-driven Pokemon evolution advisor. Compare stats, explore evolution paths, and decide whether to evolve."
+    />
+    <meta name="theme-color" content="#0b1020" />
+    <title>EvoLens — Pokemon evolution advisor</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://raw.githubusercontent.com" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#advisor">Skip to the advisor</a>
+
+    <header class="site-header shell">
+      <a class="brand" href="./" aria-label="EvoLens home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>EvoLens</span>
+      </a>
+      <div class="data-pill" id="data-pill" aria-live="polite">
+        <span class="status-dot"></span>
+        Loading data…
+      </div>
+    </header>
+
+    <main id="advisor">
+      <section class="hero shell" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Pokemon evolution advisor</p>
+          <h1 id="page-title">Should I evolve <span>this Pokemon?</span></h1>
+          <p class="hero-intro">
+            Choose a Pokemon and get a clear, data-backed answer. Compare base
+            stats, inspect every evolution path, and match the choice to how you
+            like to play.
+          </p>
+        </div>
+
+        <div class="search-panel">
+          <form id="search-form" class="search-form" role="search" novalidate>
+            <label for="pokemon-search">Find a Pokemon</label>
+            <div class="search-row">
+              <div class="search-combobox">
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="m21 21-4.35-4.35m2.35-5.15a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />
+                </svg>
+                <input
+                  id="pokemon-search"
+                  name="pokemon"
+                  type="search"
+                  placeholder="Try Eevee, Bulbasaur, or #25"
+                  autocomplete="off"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-controls="search-results"
+                  aria-expanded="false"
+                />
+                <ul id="search-results" class="search-results" role="listbox" hidden></ul>
+              </div>
+              <button class="primary-button" type="submit">
+                Analyse
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          <div class="search-footer">
+            <button class="text-button" id="random-button" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+              </svg>
+              Surprise me
+            </button>
+            <p>Tip: search by name or Pokedex number</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="controls shell" aria-labelledby="priority-title">
+        <div>
+          <p class="control-label" id="priority-title">What matters most?</p>
+          <p class="control-help">Used to rank branching evolutions.</p>
+        </div>
+        <fieldset class="segments" aria-describedby="priority-title">
+          <legend class="sr-only">Choose your preferred play style</legend>
+          <label>
+            <input type="radio" name="priority" value="balanced" checked />
+            <span>Balanced</span>
+          </label>
+          <label>
+            <input type="radio" name="priority" value="offense" />
+            <span>Offense</span>
+          </label>
+          <label>
+            <input type="radio" name="priority" value="defense" />
+            <span>Defense</span>
+          </label>
+          <label>
+            <input type="radio" name="priority" value="speed" />
+            <span>Speed</span>
+          </label>
+        </fieldset>
+      </section>
+
+      <section class="loading-state shell" id="loading-state" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Reading the Pokedex…</p>
+      </section>
+
+      <section class="error-state shell" id="error-state" hidden role="alert">
+        <div class="error-icon" aria-hidden="true">!</div>
+        <div>
+          <h2>The Pokemon data could not be loaded.</h2>
+          <p>
+            Run this site through a local web server or open the published GitHub
+            Pages link. Browsers cannot load the CSV when this file is opened directly.
+          </p>
+        </div>
+      </section>
+
+      <div id="results" hidden>
+        <section class="decision-section shell" aria-label="Evolution recommendation">
+          <article class="pokemon-card surface" aria-labelledby="current-name">
+            <div class="card-topline">
+              <span class="section-kicker">Current Pokemon</span>
+              <span class="dex-number" id="current-number"></span>
+            </div>
+
+            <div class="art-stage">
+              <span class="art-orbit orbit-one" aria-hidden="true"></span>
+              <span class="art-orbit orbit-two" aria-hidden="true"></span>
+              <img id="current-image" alt="" width="360" height="360" />
+            </div>
+
+            <div class="pokemon-heading">
+              <div>
+                <h2 id="current-name"></h2>
+                <p id="current-subtitle"></p>
+              </div>
+              <div class="type-list" id="current-types" aria-label="Pokemon types"></div>
+            </div>
+
+            <dl class="fact-grid" id="current-facts"></dl>
+            <div class="abilities" id="current-abilities"></div>
+          </article>
+
+          <article class="recommendation surface" aria-live="polite">
+            <div class="recommendation-head">
+              <p class="section-kicker">The verdict</p>
+              <span class="verdict-badge" id="verdict-badge"></span>
+            </div>
+            <div class="verdict-icon" id="verdict-icon" aria-hidden="true"></div>
+            <h2 id="recommendation-title"></h2>
+            <p class="recommendation-copy" id="recommendation-copy"></p>
+            <div class="metric-grid" id="metric-grid"></div>
+            <div class="method-note">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M12 8v4m0 4h.01M10.3 3.6 2.5 17.1A2 2 0 0 0 4.2 20h15.6a2 2 0 0 0 1.7-2.9L13.7 3.6a2 2 0 0 0-3.4 0Z" />
+              </svg>
+              <p id="method-note"></p>
+            </div>
+          </article>
+
+          <aside class="evolution-panel surface" aria-labelledby="options-title">
+            <div class="card-topline">
+              <div>
+                <span class="section-kicker">Next step</span>
+                <h2 id="options-title">Evolution options</h2>
+              </div>
+              <span class="option-count" id="option-count"></span>
+            </div>
+            <p class="option-intro" id="option-intro"></p>
+            <div class="evolution-options" id="evolution-options"></div>
+          </aside>
+        </section>
+
+        <section class="analysis-grid shell">
+          <article class="stats-panel surface" aria-labelledby="stats-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">Base stats</p>
+                <h2 id="stats-title">Head-to-head comparison</h2>
+              </div>
+              <div class="chart-legend" id="chart-legend"></div>
+            </div>
+            <div class="stats-chart" id="stats-chart"></div>
+          </article>
+
+          <article class="profile-panel surface" aria-labelledby="profile-title">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">Quick read</p>
+                <h2 id="profile-title">What changes?</h2>
+              </div>
+            </div>
+            <div class="change-list" id="change-list"></div>
+          </article>
+        </section>
+
+        <section class="chain-section shell surface" aria-labelledby="chain-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">Family tree</p>
+              <h2 id="chain-title">Evolution chain</h2>
+            </div>
+            <p class="chain-hint">Select any Pokemon to analyse it</p>
+          </div>
+          <div class="chain-scroll">
+            <div class="evolution-chain" id="evolution-chain"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer shell">
+      <p>
+        Recommendations use the supplied dataset's evolution links and base stats.
+        Evolution requirements vary by game and are not included in the data.
+      </p>
+      <p>
+        Artwork served by
+        <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">PokeAPI sprites</a>.
+      </p>
+    </footer>
+
+    <noscript>
+      <div class="noscript">This interactive advisor needs JavaScript to run.</div>
+    </noscript>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
